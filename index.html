@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penal Juris Quiz & Doc - Plataforma de Estudos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc;
+        }
+        .executive-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .hidden-screen { display: none !important; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .ai-pulse {
+            animation: ai-glow 2s infinite ease-in-out;
+        }
+        @keyframes ai-glow {
+            0%, 100% { border-color: rgba(220, 38, 38, 0.5); box-shadow: 0 0 5px rgba(220, 38, 38, 0.2); }
+            50% { border-color: rgba(220, 38, 38, 1); box-shadow: 0 0 15px rgba(220, 38, 38, 0.4); }
+        }
+
+        /* Modal Donation */
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printable-apostila, #printable-apostila * { visibility: visible; }
+            #printable-apostila { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%;
+                background: white !important;
+                color: black !important;
+                display: block !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col">
+
+    <!-- Header Executivo -->
+    <header class="executive-gradient text-white shadow-2xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-6 py-5">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="bg-red-700 p-3 rounded-2xl shadow-xl shadow-red-900/40 cursor-pointer" onclick="location.reload()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-tight leading-none uppercase italic">Penal Juris Quiz</h1>
+                        <p class="text-xs text-red-400 font-bold mt-1.5 tracking-[0.2em] uppercase leading-none">Educação Jurídica • N1</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="openDonationModal()" class="bg-emerald-600 border border-emerald-500 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-emerald-500 transition-all flex items-center gap-2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M5 5l14 14M19 5L5 19"/></svg>
+                        DOE E COLABORE
+                    </button>
+                    <button onclick="showScreen('apostila')" class="bg-slate-800 border border-slate-700 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-red-700 transition-all flex items-center gap-2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
+                        Apostila
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal Doação -->
+    <div id="modal-donation" class="fixed inset-0 z-[100] modal-overlay hidden items-center justify-center p-6 no-print">
+        <div class="bg-white rounded-[3rem] shadow-2xl max-w-lg w-full p-12 space-y-8 animate-fade-in relative">
+            <button onclick="closeDonationModal()" class="absolute top-8 right-8 text-slate-300 hover:text-slate-900 transition-colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+            <div class="text-center space-y-4">
+                <div class="inline-block bg-emerald-100 text-emerald-700 p-4 rounded-3xl mb-4">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                </div>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Colabore com a Educação</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">
+                    O valor doado será utilizado para garantir que a <strong>inteligência artificial sempre funcione de forma gratuita</strong> para os usuários e para a melhoria contínua da plataforma. Agradecemos sua contribuição voluntária.
+                </p>
+            </div>
+            
+            <div class="bg-slate-50 p-8 rounded-[2rem] border-2 border-dashed border-slate-200 text-center space-y-4">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chave PIX (E-mail)</p>
+                <div class="flex items-center justify-center gap-3">
+                    <span class="text-lg font-black text-emerald-600 select-all">financeiro@edupam.com.br</span>
+                    <button onclick="copyPix()" class="p-2 bg-white rounded-lg border border-slate-200 hover:bg-emerald-50 transition-all shadow-sm">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    </button>
+                </div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase">Titular: Benedito Palheta</p>
+            </div>
+
+            <button onclick="closeDonationModal()" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-emerald-600 transition-all uppercase tracking-widest text-xs">Apoiar Projeto</button>
+        </div>
+    </div>
+
+    <main id="app-container" class="flex-grow flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        
+        <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.02] flex items-center justify-center select-none no-print">
+            <div class="text-[18rem] font-black -rotate-12 tracking-tighter uppercase text-red-900">FASEC PENAL</div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="screen-loading" class="flex flex-col items-center gap-6 text-slate-400 py-20 no-print">
+            <div class="relative">
+                <div class="w-16 h-16 border-4 border-slate-200 border-t-red-700 rounded-full animate-spin"></div>
+            </div>
+            <p class="font-black uppercase tracking-[0.4em] text-[9px]">Sincronizando Sistema...</p>
+        </div>
+
+        <!-- Landing Screen -->
+        <div id="screen-landing" class="hidden-screen w-full max-w-lg space-y-6 animate-fade-in no-print">
+            <div id="record-card" class="hidden bg-white border border-red-100 rounded-[2.5rem] p-7 shadow-sm flex items-center justify-between">
+                <div class="flex items-center gap-5">
+                    <div class="bg-red-700 text-white p-4 rounded-3xl shadow-xl shadow-red-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Recorde da Turma</p>
+                        <p id="record-name" class="font-black text-slate-800 mt-1.5 text-lg leading-none">-</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p id="record-score" class="text-4xl font-black text-red-700 tabular-nums leading-none">0</p>
+                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">XP</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-[3rem] shadow-2xl p-12 space-y-8">
+                <div class="text-center space-y-3">
+                    <div class="inline-block bg-slate-900 text-white text-[10px] font-black px-5 py-1.5 rounded-full uppercase tracking-[0.2em] mb-2 shadow-xl shadow-slate-200">Plataforma Acadêmica</div>
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tight leading-none uppercase tracking-tighter leading-tight">Direito Penal IV</h2>
+                    <p class="text-slate-500 font-medium text-sm italic">Incolumidade & Paz Pública • FASEC</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Seu Nome Institucional</label>
+                        <input type="text" id="input-name" placeholder="Nome Completo" class="w-full bg-slate-50 p-5 rounded-2xl border-2 border-transparent focus:border-red-700 focus:bg-white outline-none transition-all font-bold placeholder:text-slate-300 shadow-inner">
+                    </div>
+                    <button onclick="goToArchetypes()" class="w-full bg-slate-900 text-white font-black py-6 rounded-[2rem] shadow-2xl shadow-slate-300 hover:bg-red-700 transition-all active:scale-95 uppercase tracking-widest text-xs">INICIAR SIMULADO</button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showScreen('apostila')" class="w-full bg-white border-2 border-slate-200 text-slate-900 font-black py-4 rounded-2xl hover:bg-slate-50 transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+                            APOSTILA
+                        </button>
+                        <button onclick="openDonationModal()" class="w-full bg-emerald-50 text-emerald-700 font-black py-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-100 transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v20M5 5l14 14M19 5L5 19"/></svg>
+                            DOE E AJUDE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archetype Screen -->
+        <div id="screen-archetypes" class="hidden-screen w-full max-w-6xl space-y-10 animate-fade-in flex flex-col items-center no-print">
+            <div class="text-center space-y-3">
+                <h2 class="text-4xl font-black text-slate-800 tracking-tight uppercase tracking-tighter leading-tight">Escolha seu Perfil</h2>
+                <p class="text-slate-500 font-medium">Sua identidade influenciará sua posição no ranking.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full px-6">
+                <div onclick="selectArch('lawyer')" id="arch-lawyer" class="arch-card cursor-pointer p-10 rounded-[2.5rem] bg-white border-2 border-transparent hover:border-blue-600 shadow-sm transition-all flex flex-col items-center group">
+                    <div class="w-20 h-20 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:-translate-y-2 shadow-lg"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+                    <span class="font-black text-slate-800 text-lg uppercase tracking-tight">Advogado</span>
+                </div>
+                <div onclick="selectArch('judge')" id="arch-judge" class="arch-card cursor-pointer p-10 rounded-[2.5rem] bg-white border-2 border-transparent hover:border-purple-600 shadow-sm transition-all flex flex-col items-center group">
+                    <div class="w-20 h-20 rounded-3xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all transform group-hover:-translate-y-2 shadow-lg"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 12-8.5 8.5a2.12 2.12 0 1 1-3-3L11 9"/><path d="M15 13 9 7"/><path d="m21 5-1-1-10 7 8.15 8.15a.5.5 0 0 0 .7 0L21 17a.5.5 0 0 0 0-.7L13 8l7-10Z"/></svg></div>
+                    <span class="font-black text-slate-800 text-lg uppercase tracking-tight">Juiz</span>
+                </div>
+                <div onclick="selectArch('police')" id="arch-police" class="arch-card cursor-pointer p-10 rounded-[2.5rem] bg-white border-2 border-transparent hover:border-red-600 shadow-sm transition-all flex flex-col items-center group">
+                    <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-600 flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:text-white transition-all transform group-hover:-translate-y-2 shadow-lg shadow-red-50/20"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <span class="font-black text-slate-800 text-lg uppercase tracking-tight">Delegado</span>
+                </div>
+                <div onclick="selectArch('intern')" id="arch-intern" class="arch-card cursor-pointer p-10 rounded-[2.5rem] bg-white border-2 border-transparent hover:border-orange-600 shadow-sm transition-all flex flex-col items-center group">
+                    <div class="w-20 h-20 rounded-3xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all transform group-hover:-translate-y-2 shadow-lg shadow-orange-50/20"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    <span class="font-black text-slate-800 text-lg uppercase tracking-tight">Estagiário</span>
+                </div>
+            </div>
+            <button onclick="startQuiz()" id="btn-start" disabled class="bg-slate-900 text-white font-black px-24 py-6 rounded-[2rem] shadow-2xl shadow-slate-300 disabled:opacity-20 transition-all uppercase tracking-[0.3em] text-xs">INICIAR MARATONA (26 QUESTÕES)</button>
+        </div>
+
+        <!-- Screen Apostila -->
+        <div id="screen-apostila" class="hidden-screen w-full max-w-5xl space-y-8 animate-fade-in flex flex-col items-center">
+            <div class="flex flex-col lg:flex-row justify-between items-center w-full gap-6 no-print">
+                <div class="flex items-center gap-4">
+                    <button onclick="showScreen('landing')" class="p-3 bg-slate-100 rounded-2xl hover:bg-slate-200 transition-all">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-800 tracking-tight uppercase leading-tight">Material de Apoio N1</h2>
+                        <p class="text-slate-500 font-medium italic">Revisão Completa Fundamentada</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="window.print()" class="bg-red-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-3">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                        PDF
+                    </button>
+                </div>
+            </div>
+
+            <div id="printable-apostila" class="w-full bg-white rounded-[3rem] shadow-2xl p-10 lg:p-20 border border-slate-100 space-y-12">
+                <div class="border-b-4 border-red-700 pb-10 text-center space-y-4">
+                    <h1 class="text-5xl font-black text-slate-900 uppercase tracking-tighter leading-none">Apostila de Estudos Penal IV</h1>
+                    <p class="text-xl font-bold text-red-700 tracking-[0.2em] uppercase">Educação Jurídica Especializada</p>
+                    <div class="flex justify-center gap-10 pt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <span>Palmas/TO - 2026</span>
+                        <span>|</span>
+                        <span>Direito 5º Período</span>
+                    </div>
+                </div>
+
+                <div id="apostila-content" class="space-y-16 text-slate-800 leading-relaxed"></div>
+
+                <div class="border-t border-slate-100 pt-10 text-center">
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] mb-4">Desenvolvimento e Autoria da Plataforma</p>
+                    <div class="flex flex-col items-center">
+                        <span class="text-slate-900 font-black text-xl tracking-tighter uppercase">Benedito Palheta</span>
+                        <span class="text-[9px] font-bold text-red-600 mt-1 uppercase tracking-widest">Todos os Direitos Reservados © 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="screen-quiz" class="hidden-screen w-full max-w-5xl glass-card rounded-[3rem] shadow-2xl overflow-hidden animate-fade-in flex flex-col no-print">
+            <div class="h-3 bg-slate-100 w-full"><div id="progress-bar" class="h-full bg-red-700 transition-all duration-700" style="width: 0%"></div></div>
+            <div class="p-10 lg:p-16 space-y-12">
+                <div class="flex justify-between items-center">
+                    <span id="question-counter" class="text-[10px] font-black tracking-[0.5em] text-slate-400 uppercase">DIREITO PENAL IV / QUESTÃO 01</span>
+                    <span id="current-xp" class="bg-red-700 text-white px-6 py-2.5 rounded-full font-black text-sm tabular-nums shadow-xl shadow-red-200">XP: 0</span>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
+                        <div class="space-y-4 flex-grow">
+                            <div class="flex items-center gap-3">
+                                <span id="question-case" class="text-[10px] font-black bg-slate-900 text-white px-4 py-1.5 rounded-lg tracking-widest uppercase shadow-lg">TIPO PENAL</span>
+                            </div>
+                            <h2 id="question-text" class="text-3xl font-bold text-slate-800 leading-[1.2]">Carregando fundamentos jurídicos...</h2>
+                        </div>
+                        
+                        <button onclick="askGeminiIA()" id="btn-ai" class="shrink-0 flex items-center gap-4 bg-white border-2 border-red-700 text-red-700 px-8 py-4 rounded-[1.5rem] hover:bg-red-700 hover:text-white transition-all font-black text-xs ai-pulse uppercase tracking-[0.2em] shadow-xl shadow-red-50/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M12 12v.01"/></svg>
+                            Mentor Virtual IA
+                        </button>
+                    </div>
+
+                    <div id="ai-response-box" class="hidden bg-slate-900 text-slate-300 p-10 rounded-[2.5rem] text-base leading-relaxed border border-slate-700 shadow-2xl animate-fade-in relative ring-4 ring-red-600/20">
+                        <div class="absolute top-6 right-8 text-red-500 opacity-20 animate-pulse"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M12 12v.01"/></svg></div>
+                        <p class="text-red-400 font-black text-[10px] uppercase tracking-[0.4em] mb-5">Norte Estratégico • Mentor Penal Juriz Quiz</p>
+                        <div id="ai-text" class="custom-scrollbar max-h-56 overflow-y-auto pr-6 font-medium italic leading-loose">Analisando o caso concreto...</div>
+                        <button onclick="this.parentElement.classList.add('hidden')" class="mt-8 text-[10px] font-black uppercase text-slate-500 hover:text-white transition-colors tracking-widest border-b border-transparent hover:border-white">Fechar Orientação</button>
+                    </div>
+                </div>
+
+                <div id="options-container" class="grid grid-cols-1 gap-5"></div>
+
+                <div id="feedback-box" class="hidden p-10 rounded-[3rem] animate-fade-in border-4 shadow-2xl">
+                    <div class="flex gap-8">
+                        <div id="feedback-icon" class="shrink-0 scale-[1.5]"></div>
+                        <div class="space-y-4">
+                            <p id="feedback-title" class="font-black text-2xl tracking-tighter leading-none uppercase"></p>
+                            <div class="bg-white/40 p-8 rounded-[1.5rem] border border-white/40 shadow-inner">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Veredito Fundamentado</p>
+                                <p id="feedback-explanation" class="text-base text-slate-700 font-semibold leading-relaxed"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="nextQuestion()" class="mt-10 w-full bg-slate-900 text-white font-black py-6 rounded-[1.5rem] shadow-2xl hover:bg-red-700 transition-all uppercase tracking-[0.2em] text-xs">PRÓXIMA ETAPA</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="hidden-screen w-full max-w-2xl space-y-8 animate-fade-in no-print">
+            <div class="bg-white rounded-[3.5rem] shadow-2xl p-14 text-center space-y-12 border border-slate-50">
+                <div class="relative inline-block text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tighter uppercase leading-tight">Ciclo Concluído</h2>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.4em]">Auditado pela Plataforma Penal Juriz</p>
+                </div>
+                <div class="py-10 border-y border-slate-50">
+                    <p id="final-score" class="text-8xl font-black text-red-700 tabular-nums tracking-tighter">0</p>
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em] mt-3">XP ACUMULADO</p>
+                </div>
+                <div class="space-y-6 text-left">
+                    <h3 class="font-black text-[11px] uppercase tracking-[0.3em] text-slate-400 flex items-center gap-3">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        QUADRO DE HONRA
+                    </h3>
+                    <div id="ranking-list" class="space-y-4 max-h-72 overflow-y-auto pr-3 custom-scrollbar"></div>
+                </div>
+                <button onclick="location.reload()" class="w-full bg-slate-900 text-white font-black py-6 rounded-[2rem] shadow-2xl hover:bg-red-700 transition-all uppercase tracking-[0.4em] text-[10px]">REINICIAR MARATONA</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 text-slate-500 py-16 px-8 border-t border-slate-900 mt-auto shadow-[0_-20px_50px_rgba(0,0,0,0.1)] no-print">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+            <div class="space-y-4 text-center lg:text-left">
+                <p class="text-white font-black text-sm uppercase tracking-[0.4em] mb-2 leading-none">Apoio Acadêmico</p>
+                <div class="flex flex-col gap-3 text-xs font-medium">
+                    <span class="flex items-center justify-center lg:justify-start gap-4">FASEC - Palmas/TO</span>
+                </div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="text-center mb-6">
+                    <p class="text-[8px] font-black uppercase tracking-[0.8em] text-slate-600 mb-2 leading-none">Desenvolvimento e Autoria</p>
+                    <p class="text-white font-black text-2xl tracking-tighter uppercase leading-none">Benedito Palheta</p>
+                </div>
+                <button onclick="openDonationModal()" class="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-full text-[10px] font-black shadow-2xl transition-all uppercase tracking-widest hover:scale-105 active:scale-95">DOE E AJUDE</button>
+            </div>
+            <div class="hidden lg:flex flex-col items-end">
+                <p class="text-[9px] text-slate-700 leading-relaxed text-right uppercase tracking-[0.4em] font-black italic">Penal Quiz & Doc System v1.4<br>© 2026 Palmas/TO - Benedito Palheta</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // FIREBASE SETUP
+        let fbConfig = {};
+        try { if (typeof __firebase_config !== 'undefined') fbConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config; } catch (e) {}
+        const apiKey = ""; 
+        const app = (fbConfig && fbConfig.apiKey) ? initializeApp(fbConfig) : null;
+        const auth = app ? getAuth(app) : null;
+        const db = app ? getFirestore(app) : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'penal-juriz-system';
+
+        const QUIZ_DATA = [
+            { id: 1, case: "Conceito Geral", question: "O que se entende por 'Incolumidade Pública' no Código Penal?", options: ["Paz individual", "Estado de preservação ou segurança de pessoas/coisas indeterminadas", "Proteção exclusiva do Governo", "Inexistência de crimes culposos"], correct: 1, hint: "A vítima neste título não é uma pessoa certa, mas a sociedade como um todo.", explanation: "Incolumidade é o estado de segurança de pessoas ou coisas indeterminadas. (Título VIII do CP)." },
+            { id: 2, case: "Natureza do Risco", question: "Diferencie perigo concreto de perigo abstrato.", options: ["Concreto é presumido", "Abstrato exige prova real", "Concreto exige demonstração de risco efetivo comprovado", "Não há diferença jurídica"], correct: 2, hint: "Em um deles, o juiz precisa de provas de que alguém quase se feriu. No outro, basta a ação.", explanation: "Perigo concreto deve ser comprovado no caso real. O abstrato é presumido pela norma (juris et de jure)." },
+            { id: 3, case: "Art. 250 CP", question: "Queimar o próprio patrimônio e gerar perigo comum é crime?", options: ["Não, é direito de propriedade", "Sim, responde pelo crime de incêndio se expuser a perigo a coletividade", "Apenas se houver dolo de matar", "É apenas infração administrativa"], correct: 1, hint: "Se o fogo 'pular' para o vizinho ou ameaçar o quarteirão, o dono do bem responde penalmente.", explanation: "O proprietário responde se gerar perigo comum à coletividade. (Art. 250 do CP)." },
+            { id: 4, case: "Finalidade Econômica", question: "Incêndio cometido para receber valor de seguro gera:", options: ["Causa de aumento de pena (majorado)", "Absolvição por autodefesa", "Redução de pena", "Indenização civil apenas"], correct: 0, hint: "O intuito de lucro qualifica a conduta devido ao dolo específico de vantagem indevida.", explanation: "O Art. 250, §1º, I prevê aumento de pena pelo intuito de lucro (vantagem pecuniária)." },
+            { id: 5, case: "Prova Material", question: "A confissão do réu substitui a perícia no crime de incêndio?", options: ["Sim, confissão é rainha das provas", "Não, por ser crime não transeunte exige exame pericial (Art. 158 CPP)", "Sim, se houver fotos", "Somente se o réu for reincidente"], correct: 1, hint: "Crimes que deixam vestígios físicos exigem a palavra do perito técnico.", explanation: "Crime não transeunte exige perícia técnica. A confissão isolada não supre a materialidade. (Art. 158 CPP)." },
+            { id: 6, case: "Conflito de Leis", question: "Diferencie incêndio do CP (Art. 250) do Incêndio Ambiental (Art. 41).", options: ["CP é em floresta", "Ambiental é perigo abstrato em mata; CP é concreto em lavoura/pastagem", "São crimes idênticos", "Ambiental é só culposo"], correct: 1, hint: "Matas e florestas têm proteção ambiental específica; pastos e lavouras caem no Código Penal.", explanation: "Incêndio ambiental (mata/floresta - Art. 41 Lei 9.605/98) x CP (lavoura/pastagem - Art. 250 CP)." },
+            { id: 7, case: "Art. 251 CP", question: "O crime de explosão exige a detonação efetiva para se consumar?", options: ["Sim, obrigatoriamente", "Não, a simples colocação de engenho perigoso já basta", "Somente com ruído alto", "Somente com dano estrutural"], correct: 1, hint: "A lei pune o risco criado pela mera disposição do artefato explosivo em local de circulação.", explanation: "Consuma-se com a simples exposição a perigo (colocação, arremesso ou explosão). (Art. 251 do CP)." },
+            { id: 8, case: "Modalidade Mitigada", question: "O uso de pólvora em vez de dinamite na explosão gera:", options: ["Pena de morte", "Explosão privilegiada (§1º do Art. 251) com pena reduzida", "Absolvição imediata", "Aumento de pena"], correct: 1, hint: "Substâncias com menor poder destrutivo garantem uma punição menos severa.", explanation: "Privilégio pelo uso de substância de menor poder destrutivo que dinamite. (Art. 251, §1º do CP)." },
+            { id: 9, case: "Art. 257 CP", question: "Subtrair botes salva-vidas ou macas de ambulância configura:", options: ["Furto simples", "Subtração de material de salvamento", "Dano simples", "Peculato de uso"], correct: 1, hint: "O objeto material é destinado ao socorro ou combate ao perigo.", explanation: "Tipo penal específico para proteção de materiais de socorro/salvamento. (Art. 257 do CP)." },
+            { id: 10, case: "Art. 267 CP", question: "O crime de Epidemia é classificado como:", options: ["Formal", "Material (consuma-se com a efetiva propagação)", "Mera conduta", "Omissivo"], correct: 1, hint: "A lei exige que o germe patogênico se espalhe efetivamente para haver crime consumado.", explanation: "Material, pois exige a propagação efetiva da moléstia. (Art. 267 do CP)." },
+            { id: 11, case: "Resultado Agravado", question: "Na epidemia culposa que resulta morte, a pena é:", options: ["Aumentada de 1/3", "Reduzida", "Ignorada", "Extinta"], correct: 0, hint: "Resultados mais graves causados por culpa no decorrer do crime aumentam a reprimenda.", explanation: "No caso de epidemia culposa com morte, a pena é aumentada de um terço. (Art. 267, §2º do CP)." },
+            { id: 12, case: "Art. 268 CP", question: "A infração de medida sanitária preventiva é:", options: ["Norma penal completa", "Norma penal em branco (exige complemento de portaria/decreto)", "Crime contra a vida", "Apenas ato administrativo"], correct: 1, hint: "O crime depende do que o 'poder público' determina em cada situação de saúde.", explanation: "Depende de portarias ou decretos para preencher o tipo legal. (Art. 268 do CP)." },
+            { id: 13, case: "Sujeito Especial", question: "Quem comete o crime de Omissão de Notificação de Doença?", options: ["O paciente", "O médico", "O dono do hospital", "Policial Militar"], correct: 1, hint: "Apenas quem tem o dever profissional e técnico de avisar a autoridade.", explanation: "Crime próprio que somente pode ser cometido por médico. (Art. 269 do CP)." },
+            { id: 14, case: "Art. 273 CP", question: "O STF considerou a pena de 10-15 anos para remédio sem registro como:", options: ["Constitucional", "Inconstitucional (aplicando-se a pena original de 1-3 anos)", "Válida apenas para traficantes", "Revogada"], correct: 1, hint: "O Tribunal entendeu que a punição era desproporcional à falha administrativa do registro.", explanation: "STF restaurou a pena original (1 a 3 anos) por ser a atual desproporcional. (RE 979962)." },
+            { id: 15, case: "Art. 282 CP", question: "Exercer medicina sem diploma ou autorização é:", options: ["Charlatanismo", "Exercício Ilegal da Medicina, Arte Dentária ou Farmacêutica", "Curandeirismo", "Estelionato"], correct: 1, hint: "O crime ocorre pela falta da habilitação técnica exigida pela lei brasileira.", explanation: "Crime contra a saúde pública por falta de habilitação legal. (Art. 282 do CP)." },
+            { id: 16, case: "Excludente Penal", question: "Estudante que socorre tribo em perigo iminente atua em:", options: ["Legítima defesa", "Estado de Necessidade", "Cumprimento de dever", "Flagrante delito"], correct: 1, hint: "O perigo atual à vida justifica a conduta de quem não possui a habilitação técnica.", explanation: "Excludente de ilicitude por perigo atual e inexistência de alternativa. (Art. 24 do CP)." },
+            { id: 17, case: "Engano Público", question: "Anunciar cura por 'fórmulas mágicas ou secretas' é:", options: ["Charlatanismo", "Curandeirismo", "Exercício Ilegal", "Peculato eletrônico"], correct: 0, hint: "A mentira sobre o método infalível e secreto é a marca deste crime.", explanation: "Elementar 'meio secreto/infalível' define o charlatanismo. (Art. 283 do CP)." },
+            { id: 18, case: "Habitualidade", question: "O crime de Curandeirismo (Art. 284) exige:", options: ["Um único ato", "Habitualidade (repetição do comportamento como ocupação)", "Diploma falso", "Dolo de matar"], correct: 1, hint: "Um ato isolado não basta; o agente deve agir como se aquela fosse sua 'profissão'.", explanation: "Exige reiteração para configuração do tipo penal. (Art. 284 do CP)." },
+            { id: 19, case: "Art. 286 CP", question: "Incitar publicamente a prática de crime futuro é:", options: ["Apologia", "Incitação ao crime", "Associação", "Dano qualificado"], correct: 1, hint: "O agente estimula o público a cometer um crime que ainda não aconteceu.", explanation: "Estimular publicamente conduta criminosa determinada e futura. (Art. 286 do CP)." },
+            { id: 20, case: "Passado Penal", question: "Elogiar publicamente um autor de crime por fato ocorrido é:", options: ["Incitação", "Apologia de crime ou criminoso", "Milícia", "Contravenção"], correct: 1, hint: "A conduta olha para o retrovisor, enaltecendo o que já foi consumado.", explanation: "A apologia foca no elogio a fato ou autor de crime já ocorrido. (Art. 287 do CP)." },
+            { id: 21, case: "Art. 288 CP", question: "Qual o número mínimo de membros para Associação Criminosa?", options: ["2 pessoas", "3 pessoas", "4 pessoas", "5 pessoas"], correct: 1, hint: "A lei mudou; o antigo bando ou quadrilha agora exige este número específico.", explanation: "A redação atual exige a união estável de 3 ou mais membros. (Art. 288 do CP)." },
+            { id: 22, case: "Paz Pública", question: "O crime de Milícia Privada atenta contra:", options: ["Administração", "Paz Pública", "Incolumidade apenas", "Fé Pública"], correct: 1, explanation: "Crime capitulado no Título IX - Dos Crimes Contra a Paz Pública. (Art. 288-A do CP).", hint: "Visa proteger a tranquilidade social contra grupos paralelos armados." },
+            { id: 23, case: "Diferença 1", question: "Associação Criminosa x Concurso de Pessoas (Vínculo):", options: ["Ambos são eventuais", "Associação exige união estável e permanente; Concurso pode ser eventual", "Não há diferença jurídica", "Associação é sempre momentânea"], correct: 1, hint: "Pense em qual dos casos os agentes planejam uma 'carreira' criminosa contínua.", explanation: "Estabilidade e permanência definem a associação. (Art. 288 do CP)." },
+            { id: 24, case: "Diferença 2", question: "Associação x Concurso (Finalidade):", options: ["Crime certo", "Associação visa crimes indeterminados; Concurso visa crime específico", "Contravenções apenas", "Dano simples"], correct: 1, hint: "Na associação, o grupo se une para 'cometer crimes' em geral, sem um alvo único inicial.", explanation: "Associação visa uma série de crimes não especificados. (Art. 288 do CP)." },
+            { id: 25, case: "Diferença 3", question: "Associação x Concurso (Consumação):", options: ["Associação exige prática de crime", "Associação consuma-se com a simples união estável, independente de crimes", "Concurso é formal", "Não há distinção cronológica"], correct: 1, hint: "Basta os três assinarem o 'pacto' de crimes para o crime já existir juridicamente.", explanation: "Consuma-se com a simples união estável, antes de qualquer crime fim. (Art. 288 do CP)." },
+            { id: 26, case: "Art. 264 CP", question: "Arremessar projétil contra ônibus ou trem em movimento é:", options: ["Dano simples", "Arremesso de projétil", "Tentativa de homicídio sempre", "Injuría real"], correct: 1, hint: "Pune-se o risco criado contra a segurança do veículo de transporte coletivo.", explanation: "Crime contra a segurança do transporte coletivo. (Art. 264 do CP)." }
+        ];
+
+        let userName = '';
+        let selectedArch = null;
+        let currentIndex = 0;
+        let score = 0;
+        let rankings = [];
+
+        const openDonationModal = () => document.getElementById('modal-donation').style.display = 'flex';
+        const closeDonationModal = () => document.getElementById('modal-donation').style.display = 'none';
+        
+        const copyPix = () => {
+            const el = document.createElement('textarea');
+            el.value = 'financeiro@edupam.com.br';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('Chave PIX copiada para a área de transferência!');
+        };
+
+        const renderApostila = () => {
+            const container = document.getElementById('apostila-content');
+            container.innerHTML = QUIZ_DATA.map((q, idx) => `
+                <div class="border-l-8 border-red-700 pl-8 space-y-6">
+                    <div class="space-y-2">
+                        <p class="text-[10px] font-black text-red-700 uppercase tracking-widest">Tópico ${String(idx + 1).padStart(2, '0')} | ${q.case}</p>
+                        <h3 class="text-2xl font-black text-slate-900 leading-tight leading-none">${q.question}</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-2xl">
+                            <p class="text-[10px] font-black text-yellow-700 uppercase tracking-widest mb-1">Dica de Estudo</p>
+                            <p class="text-sm font-medium text-yellow-800 italic leading-snug">${q.hint}</p>
+                        </div>
+                        <div class="bg-slate-50 border-2 border-slate-100 p-8 rounded-[2rem] shadow-inner">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 font-black">Fundamentação Técnica</p>
+                            <p class="text-base font-bold text-slate-700 leading-relaxed">${q.explanation}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const showScreen = (id) => {
+            if (id === 'apostila') renderApostila();
+            document.getElementById('screen-loading').style.display = 'none';
+            ['landing', 'archetypes', 'quiz', 'result', 'apostila'].forEach(s => document.getElementById(`screen-${s}`)?.classList.add('hidden-screen'));
+            document.getElementById(`screen-${id}`)?.classList.remove('hidden-screen');
+        };
+
+        window.goToArchetypes = () => {
+            userName = document.getElementById('input-name').value.trim();
+            if (!userName) return;
+            showScreen('archetypes');
+        };
+
+        window.selectArch = (id) => {
+            selectedArch = id;
+            document.querySelectorAll('.arch-card').forEach(c => c.classList.remove('border-red-600', 'ring-8', 'ring-red-50'));
+            document.getElementById(`arch-${id}`).classList.add('border-red-600', 'ring-8', 'ring-red-50');
+            document.getElementById('btn-start').disabled = false;
+        };
+
+        window.startQuiz = () => { showScreen('quiz'); renderQuestion(); };
+
+        const renderQuestion = () => {
+            const q = QUIZ_DATA[currentIndex];
+            document.getElementById('question-counter').textContent = `PENAL JURIZ / QUESTÃO ${String(currentIndex + 1).padStart(2, '0')}`;
+            document.getElementById('question-case').textContent = q.case;
+            document.getElementById('question-text').textContent = q.question;
+            document.getElementById('current-xp').textContent = `XP: ${score}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / 26) * 100}%`;
+            document.getElementById('ai-response-box').classList.add('hidden');
+            document.getElementById('feedback-box').classList.add('hidden');
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-6 text-left rounded-3xl border-2 border-slate-100 hover:border-red-600 hover:bg-red-50/30 text-slate-700 shadow-sm font-bold transition-all";
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(idx, btn);
+                container.appendChild(btn);
+            });
+        };
+
+        const handleAnswer = (idx, btn) => {
+            const q = QUIZ_DATA[currentIndex];
+            const isCorrect = idx === q.correct;
+            if (isCorrect) score += 100;
+            document.querySelectorAll('#options-container button').forEach(b => b.disabled = true);
+            const fb = document.getElementById('feedback-box');
+            fb.classList.remove('hidden');
+            fb.className = `p-10 rounded-[3rem] animate-fade-in border-4 shadow-2xl ${isCorrect ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}`;
+            document.getElementById('feedback-title').textContent = isCorrect ? 'ABSOLVIDO (ACERTOU!)' : 'CONDENADO (ERROU!)';
+            document.getElementById('feedback-explanation').textContent = q.explanation;
+            document.getElementById('feedback-icon').innerHTML = isCorrect ? '✅' : '❌';
+            if (isCorrect) btn.classList.add("bg-emerald-500", "text-white");
+            else btn.classList.add("bg-red-500", "text-white");
+        };
+
+        window.nextQuestion = () => {
+            if (currentIndex < 25) { currentIndex++; renderQuestion(); } else { finalize(); }
+        };
+
+        const finalize = async () => {
+            showScreen('result');
+            document.getElementById('final-score').textContent = score;
+            if (auth?.currentUser && db) {
+                try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rankings'), { name: userName, score, userId: auth.currentUser.uid, timestamp: serverTimestamp() }); } catch(e){}
+            }
+        };
+
+        async function fetchAI(url, options, retries = 5, delay = 1000) {
+            try {
+                const res = await fetch(url, options);
+                if (!res.ok) throw new Error();
+                return await res.json();
+            } catch (err) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, delay));
+                    return fetchAI(url, options, retries - 1, delay * 2);
+                }
+                throw err;
+            }
+        }
+
+        window.askGeminiIA = async () => {
+            const box = document.getElementById('ai-response-box');
+            const text = document.getElementById('ai-text');
+            const btn = document.getElementById('btn-ai');
+            box.classList.remove('hidden');
+            text.innerHTML = "O mentor Penal Juriz Quiz está analisando o tipo penal...";
+            btn.disabled = true;
+            const q = QUIZ_DATA[currentIndex];
+            const systemPrompt = `Você é o Mentor Virtual Penal Juriz Quiz. Ajude o aluno a entender o crime sem dar a resposta. Cite o artigo do Código Penal e explique a lógica da conduta. Seja breve e técnico. Não mencione nomes de pessoas reais.`;
+            const userQuery = `Preciso de um norte para o caso: ${q.case}. Pergunta: ${q.question}`;
+            try {
+                const result = await fetchAI(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] } })
+                });
+                text.innerHTML = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            } catch (e) {
+                text.innerHTML = "Sinal instável. <b>Dica:</b> Releia os artigos 250 a 288 do CP e foque na diferença entre perigo concreto e abstrato.";
+            } finally { btn.disabled = false; }
+        };
+
+        const init = async () => {
+            if (!auth) { showScreen('landing'); return; }
+            onAuthStateChanged(auth, (u) => { if (u) { loadRankings(); showScreen('landing'); } });
+            try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch(e){ showScreen('landing'); }
+        };
+
+        const loadRankings = () => {
+            if (!auth?.currentUser || !db) return;
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'rankings');
+            onSnapshot(q, (snapshot) => {
+                rankings = snapshot.docs.map(doc => doc.data()).sort((a, b) => b.score - a.score);
+                if (rankings[0]) {
+                    document.getElementById('record-card').classList.remove('hidden');
+                    document.getElementById('record-name').textContent = rankings[0].name;
+                    document.getElementById('record-score').textContent = rankings[0].score;
+                }
+                updateResultRanking();
+            }, (err) => console.log("Offline"));
+        };
+
+        const updateResultRanking = () => {
+            const list = document.getElementById('ranking-list');
+            if (!list) return;
+            list.innerHTML = rankings.slice(0, 15).map((r, i) => `
+                <div class="flex items-center justify-between p-6 rounded-[2rem] transition-all ${auth.currentUser && r.userId === auth.currentUser.uid ? 'bg-red-700 text-white shadow-2xl scale-105' : 'bg-slate-50 border border-slate-100'}">
+                    <div class="flex items-center gap-6">
+                        <span class="font-black text-xs w-8 ${i === 0 ? 'text-yellow-500' : 'text-slate-300'}">${i+1}º</span>
+                        <span class="font-black text-sm uppercase truncate max-w-[150px] leading-none">${r.name}</span>
+                    </div>
+                    <span class="font-black text-xs tabular-nums bg-white/10 px-4 py-1.5 rounded-full border border-white/5 shadow-inner">${r.score} XP</span>
+                </div>
+            `).join('');
+        };
+
+        init();
+        window.showScreen = showScreen;
+        window.openDonationModal = openDonationModal;
+        window.closeDonationModal = closeDonationModal;
+        window.copyPix = copyPix;
+    </script>
+</body>
+</html>
